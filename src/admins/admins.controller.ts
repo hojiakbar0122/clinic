@@ -12,6 +12,11 @@ export class AdminsController {
     return this.adminsService.create(createAdminDto);
   }
 
+  @Get("activate/:link")
+  activateDoctor(@Param("link") link:string) {
+    return this.adminsService.activateAdmin(link)
+  }
+
   @Get()
   findAll() {
     return this.adminsService.findAll();

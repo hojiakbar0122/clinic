@@ -1,5 +1,13 @@
-import { Column, DataType, ForeignKey, Model, Table } from "sequelize-typescript";
+import {
+  Column,
+  DataType,
+  ForeignKey,
+  HasMany,
+  Model,
+  Table,
+} from "sequelize-typescript";
 import { Patient } from "../../patients/models/patient.model";
+import { PaymentItem } from "../../payment_items/models/payment_item.model";
 
 interface IPaymentCreationAttr {
   patientId: number;
@@ -50,4 +58,7 @@ export class Payment extends Model<Payment, IPaymentCreationAttr> {
     type: DataType.STRING,
   })
   declare created_at: Date;
+
+  @HasMany(() => PaymentItem)
+  paymentitems: PaymentItem[];
 }

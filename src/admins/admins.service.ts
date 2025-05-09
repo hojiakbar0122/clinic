@@ -1,26 +1,93 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, ServiceUnavailableException } from '@nestjs/common';
 import { CreateAdminDto } from './dto/create-admin.dto';
 import { UpdateAdminDto } from './dto/update-admin.dto';
+import { InjectModel } from '@nestjs/sequelize';
+import { Admin } from './models/admin.model';
+import { MailService } from './mail/mail.service';
+import * as bcrypt from "bcrypt";
 
 @Injectable()
 export class AdminsService {
-  create(createAdminDto: CreateAdminDto) {
-    return 'This action adds a new admin';
+  constructor(@InjectModel(Admin) private readonly adminModel:typeof Admin,
+    private readonly mailService: MailService,
+){}
+
+  async create(createAdminDto: CreateAdminDto) {
+    const { password, confirm_password } = createAdminDto;
+
+    if (password !== confirm_password) {
+      throw new BadRequestException("Parollar mos emas");
+    }
+    const hashed_password = await bcrypt.hash(password, 7);
+
+    const newAdmin = await this.adminModel.create({
+      ...createAdminDto,
+      hashed_password,
+    });
+
+    try {
+      await this.mailService.sendMail(newAdmin);
+    } catch (error) {
+      console.log(error);
+      throw new ServiceUnavailableException("Emailga xat yuborishda xatolik");
+    }
+    return newAdmin;
   }
 
   findAll() {
-    return `This action returns all admins`;
+    return this.adminModel.findAll();
   }
 
   findOne(id: number) {
-    return `This action returns a #${id} admin`;
+    return this.adminModel.findByPk(id);
   }
 
   update(id: number, updateAdminDto: UpdateAdminDto) {
-    return `This action updates a #${id} admin`;
+    return this.adminModel.update(updateAdminDto, {where:{id}});
   }
 
   remove(id: number) {
-    return `This action removes a #${id} admin`;
+    return this.adminModel.destroy({where:{id}});
   }
+
+  async findByEmail(email: string) {
+    return this.adminModel.findOne({ where: { email } });
+  }
+
+  async activateAdmin(link: string) {
+      if (!link) {
+        throw new BadRequestException("Acivation link not found");
+      }
+  
+      const updateAdmin = await this.adminModel.update(
+        { is_active: true },
+        {
+          where: {
+            activation_link: link,
+            is_active: false,
+          },
+          returning: true,
+        }
+      );
+  
+      if (!updateAdmin[1][0]) {
+        throw new BadRequestException("Admin already activated");
+      }
+  
+      return {
+        message: "Admin activated successfully",
+        is_active: updateAdmin[1][0].is_active,
+      };
+    }
+
+    async updateRefreshToken(id: number, refresh_token: string) {
+      const updatedAdmin = await this.adminModel.update(
+        {
+          refresh_token,
+        },
+        { where: { id } }
+      );
+  
+      return updatedAdmin;
+    }
 }

@@ -51,7 +51,7 @@ export class Appointment extends Model<Appointment, IAppointmentCreationAttr>{
     declare reason:string
 
     @Column({
-        type:DataType.ENUM
+        type:DataType.ENUM('pending', 'confirmed', 'cancelled')
     })
     declare status:string
 

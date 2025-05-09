@@ -4,6 +4,7 @@ export class CreateDoctorDto {
     phone: string;
     email: string;
     password: string;
+    confirm_password:string
     specialization: string;
     experience: number;
     photo_url?: string;

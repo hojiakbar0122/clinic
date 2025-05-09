@@ -16,7 +16,7 @@ interface IDoctorCreationAttr {
   last_name: string;
   phone: string;
   email: string;
-  password: string;
+  hashed_password: string;
   specialization: string;
   experience: number;
   photo_url?: string;
@@ -95,6 +95,12 @@ export class Doctor extends Model<Doctor, IDoctorCreationAttr> {
     type: DataType.BOOLEAN,
   })
   declare is_active: boolean;
+
+  @Column({
+    type:DataType.UUID,
+    defaultValue:DataType.UUIDV4()
+  })
+  declare activation_link: string
 
   @HasMany(() => Appointment)
   appointments: Appointment[];

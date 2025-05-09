@@ -5,7 +5,7 @@ interface IAdminCreationAttr {
   last_name: string;
   phone: string;
   email: string;
-  password: string;
+  hashed_password: string;
   is_creator: boolean;
   is_active: boolean;
 }
@@ -58,4 +58,10 @@ export class Admin extends Model<Admin, IAdminCreationAttr> {
     type: DataType.BOOLEAN,
   })
   declare is_active: boolean;
+
+  @Column({
+    type:DataType.UUID,
+    defaultValue:DataType.UUIDV4()
+  })
+  declare activation_link: string
 }

@@ -12,6 +12,11 @@ export class PatientsController {
     return this.patientsService.create(createPatientDto);
   }
 
+  @Get("activate/:link")
+  activateDoctor(@Param("link") link:string) {
+    return this.patientsService.activatePatient(link)
+  }
+
   @Get()
   findAll() {
     return this.patientsService.findAll();

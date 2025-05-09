@@ -9,7 +9,7 @@ interface IPatientCreationAttr {
   last_name: string;
   phone: string;
   email: string;
-  password: string;
+  hashed_password: string;
   is_active: boolean;
 }
 
@@ -56,6 +56,12 @@ export class Patient extends Model<Patient, IPatientCreationAttr> {
     type: DataType.BOOLEAN,
   })
   declare is_active: boolean;
+
+  @Column({
+    type:DataType.UUID,
+    defaultValue:DataType.UUIDV4()
+  })
+  declare activation_link: string
 
   @HasMany(()=>Appointment)
   appointments:Appointment[]

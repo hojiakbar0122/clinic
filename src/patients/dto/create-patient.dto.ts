@@ -4,5 +4,6 @@ export class CreatePatientDto {
   phone: string;
   email: string;
   password: string;
+  confirm_password: string;
   is_active: boolean;
 }

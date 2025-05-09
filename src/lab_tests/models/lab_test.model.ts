@@ -50,7 +50,7 @@ export class LabTest extends Model<LabTest, ILabTestCreationAttr>{
     declare test_name:string
 
     @Column({
-        type:DataType.STRING
+        type:DataType.ENUM('pending', 'confirmed', 'cancelled')
     })
     declare status:string
 
