@@ -3,13 +3,11 @@ import { CreateDoctorDto } from './dto/create-doctor.dto';
 import { UpdateDoctorDto } from './dto/update-doctor.dto';
 import { InjectModel } from '@nestjs/sequelize';
 import { Doctor } from './models/doctor.model';
-import { MailService } from './mail/mail.service';
 import * as bcrypt from "bcrypt";
 
 @Injectable()
 export class DoctorsService {
   constructor(@InjectModel(Doctor) private readonly doctorModel:typeof Doctor,
-    private readonly mailService: MailService,
 ){}
 
   async create(createDoctorDto: CreateDoctorDto) {
@@ -25,12 +23,6 @@ export class DoctorsService {
       hashed_password,
     });
 
-    try {
-      await this.mailService.sendMail(newDoctor);
-    } catch (error) {
-      console.log(error);
-      throw new ServiceUnavailableException("Emailga xat yuborishda xatolik");
-    }
     return newDoctor;
   }
 
@@ -54,32 +46,7 @@ export class DoctorsService {
     return this.doctorModel.findOne({ where: { email } });
   }
 
-  async activateDoctor(link: string) {
-    if (!link) {
-      throw new BadRequestException("Acivation link not found");
-    }
-
-    const updateDoctor = await this.doctorModel.update(
-      { is_active: true },
-      {
-        where: {
-          activation_link: link,
-          is_active: false,
-        },
-        returning: true,
-      }
-    );
-
-    if (!updateDoctor[1][0]) {
-      throw new BadRequestException("Doctor already activated");
-    }
-
-    return {
-      message: "Doctor activated successfully",
-      is_active: updateDoctor[1][0].is_active,
-    };
-  }
-
+ 
   async updateRefreshToken(id: number, refresh_token: string) {
     const updatedDoctor = await this.doctorModel.update(
       {

@@ -55,8 +55,10 @@ export class AuthService {
 
   async signIn(signInDto: SignInDto, res: Response) {
     const patient = await this.patientsService.findByEmail(signInDto.email);
+    console.log(patient);
+    
     if (!patient) {
-      throw new BadRequestException({ message: "Email yoki Password Notgiri" });
+      throw new BadRequestException({ message: "Email yoki Password Noto'g'ri" });
     }
     if (!patient.is_active) {
       throw new BadRequestException({ message: "Avval Emailni Tasdiqlang" });

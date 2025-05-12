@@ -51,6 +51,7 @@ export class Doctor extends Model<Doctor, IDoctorCreationAttr> {
 
   @Column({
     type: DataType.STRING,
+    // unique:true
   })
   declare email: string;
 
@@ -93,14 +94,9 @@ export class Doctor extends Model<Doctor, IDoctorCreationAttr> {
 
   @Column({
     type: DataType.BOOLEAN,
+    defaultValue:false
   })
   declare is_active: boolean;
-
-  @Column({
-    type:DataType.UUID,
-    defaultValue:DataType.UUIDV4()
-  })
-  declare activation_link: string
 
   @HasMany(() => Appointment)
   appointments: Appointment[];

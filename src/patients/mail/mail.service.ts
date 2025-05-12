@@ -13,11 +13,11 @@ export class MailService {
         await this.mailerService.sendMail({
             to:patient.email,
             subject:"Welcome to Clinic App!",
-            template:"./confirmation",
-            context:{
-                name:patient.first_name,
-                url,
-            }
+            html:`<h1>Hello! Dear ${patient.first_name},</h1>
+<h2>Please click below to confirmation</h2>
+<p>
+    <a href="${url}">Confirm</a>
+</p>`,
         })
     }
 }

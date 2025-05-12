@@ -5,8 +5,8 @@ import { Response } from "express";
 import { CookieGetter } from "../../common/decorators/cookie-getter.decorator";
 import { CreatePatientDto } from "../dto/create-patient.dto";
 
-@Controller("auth")
-export class AuthController {
+@Controller("patient-auth")
+export class PatientAuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post("sign-up")

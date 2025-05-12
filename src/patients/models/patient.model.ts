@@ -10,7 +10,6 @@ interface IPatientCreationAttr {
   phone: string;
   email: string;
   hashed_password: string;
-  is_active: boolean;
 }
 
 @Table({ tableName: "patients" })
@@ -39,6 +38,7 @@ export class Patient extends Model<Patient, IPatientCreationAttr> {
 
   @Column({
     type: DataType.STRING,
+    // unique:true
   })
   declare email: string;
 
@@ -54,6 +54,7 @@ export class Patient extends Model<Patient, IPatientCreationAttr> {
 
   @Column({
     type: DataType.BOOLEAN,
+    defaultValue:false
   })
   declare is_active: boolean;
 

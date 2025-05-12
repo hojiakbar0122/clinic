@@ -3,13 +3,11 @@ import { CreateAdminDto } from './dto/create-admin.dto';
 import { UpdateAdminDto } from './dto/update-admin.dto';
 import { InjectModel } from '@nestjs/sequelize';
 import { Admin } from './models/admin.model';
-import { MailService } from './mail/mail.service';
 import * as bcrypt from "bcrypt";
 
 @Injectable()
 export class AdminsService {
   constructor(@InjectModel(Admin) private readonly adminModel:typeof Admin,
-    private readonly mailService: MailService,
 ){}
 
   async create(createAdminDto: CreateAdminDto) {
@@ -25,12 +23,6 @@ export class AdminsService {
       hashed_password,
     });
 
-    try {
-      await this.mailService.sendMail(newAdmin);
-    } catch (error) {
-      console.log(error);
-      throw new ServiceUnavailableException("Emailga xat yuborishda xatolik");
-    }
     return newAdmin;
   }
 
@@ -53,32 +45,6 @@ export class AdminsService {
   async findByEmail(email: string) {
     return this.adminModel.findOne({ where: { email } });
   }
-
-  async activateAdmin(link: string) {
-      if (!link) {
-        throw new BadRequestException("Acivation link not found");
-      }
-  
-      const updateAdmin = await this.adminModel.update(
-        { is_active: true },
-        {
-          where: {
-            activation_link: link,
-            is_active: false,
-          },
-          returning: true,
-        }
-      );
-  
-      if (!updateAdmin[1][0]) {
-        throw new BadRequestException("Admin already activated");
-      }
-  
-      return {
-        message: "Admin activated successfully",
-        is_active: updateAdmin[1][0].is_active,
-      };
-    }
 
     async updateRefreshToken(id: number, refresh_token: string) {
       const updatedAdmin = await this.adminModel.update(

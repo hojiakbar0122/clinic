@@ -4,9 +4,11 @@ import { SignInDto } from "./dto/sign-in.dto";
 import { Response } from "express";
 import { CookieGetter } from "../../common/decorators/cookie-getter.decorator";
 import { CreateAdminDto } from "../dto/create-admin.dto";
+import { ApiTags } from "@nestjs/swagger";
 
-@Controller("auth")
-export class AuthController {
+@ApiTags('admin-auth')
+@Controller("admin-auth")
+export class AdminAuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post("sign-up")

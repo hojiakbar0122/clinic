@@ -3,12 +3,13 @@ import { DoctorsService } from './doctors.service';
 import { DoctorsController } from './doctors.controller';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { Doctor } from './models/doctor.model';
-import { MailModule } from './mail/mail.module';
+import { AuthModule } from './auth/auth.module';
+import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
 
 @Module({
-  imports:[SequelizeModule.forFeature([Doctor]), MailModule],
+  imports:[SequelizeModule.forFeature([Doctor]), AuthModule],
   controllers: [DoctorsController],
-  providers: [DoctorsService],
-  exports:[DoctorsModule]
+  providers: [DoctorsService,  JwtAuthGuard],
+  exports:[DoctorsService]
 })
 export class DoctorsModule {}

@@ -44,7 +44,8 @@ export class AuthService {
 
   async signUp(createDoctorDto: CreateDoctorDto) {
     const doctor = await this.doctorsService.findByEmail(createDoctorDto.email);
-    if (doctor) {
+    
+    if (!doctor) {
       throw new ConflictException({
         message: "Bunday Emailli Doctor mavjud",
       });
@@ -55,8 +56,9 @@ export class AuthService {
 
   async signIn(signInDto: SignInDto, res: Response) {
     const doctor = await this.doctorsService.findByEmail(signInDto.email);
+    
     if (!doctor) {
-      throw new BadRequestException({ message: "Email yoki Password Notgiri" });
+      throw new BadRequestException({ message: "Email yoki Password Noto'g'ri" });
     }
     if (!doctor.is_active) {
       throw new BadRequestException({ message: "Avval Emailni Tasdiqlang" });
@@ -69,6 +71,7 @@ export class AuthService {
       throw new BadRequestException({ message: "Email yoki Password Notgiri" });
     }
     const { accessToken, refreshToken } = await this.generateTokens(doctor);
+    doctor.refresh_token=refreshToken
     res.cookie("refresh_token", refreshToken, {
       httpOnly: true,
       maxAge: Number(process.env.COOKIE_TIME),

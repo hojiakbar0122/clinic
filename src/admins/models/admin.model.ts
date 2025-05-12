@@ -36,6 +36,7 @@ export class Admin extends Model<Admin, IAdminCreationAttr> {
 
   @Column({
     type: DataType.STRING,
+    // unique:true
   })
   declare email: string;
 
